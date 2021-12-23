@@ -41,3 +41,15 @@ class BoardTest(unittest.TestCase):
 
         # ship2 = self.board.create_ship(1, Position(1, 2, 3, Orientation.Vertical))
         # ship3 = self.board.create_ship(1, Position(1, 2, 3, Orientation.Vertical))
+
+    def test_add_hit(self):
+        ship = self.board.create_ship(0, Position(1, 2, 3, Orientation.Vertical))
+        self.board.add_ship(ship)
+        hit = Position(1, 3)
+        self.assertEqual(self.board.add_hit(hit), (False, False))
+        hit = Position(1, 2)
+        self.assertEqual(self.board.add_hit(hit), (True, False))
+        hit = Position(2, 2)
+        self.assertEqual(self.board.add_hit(hit), (True, False))
+        hit = Position(3, 2)
+        self.assertEqual(self.board.add_hit(hit), (True, True))
