@@ -24,3 +24,13 @@ class LogicTest(unittest.TestCase):
         position = Position(1, 2, 3, Orientation.Vertical)
         self.logic.add_ship(position)
         self.assertEqual(self.board.ships.__len__(), 1)
+
+    def test_add_hit(self):
+        is_hit, is_destroyed = self.logic.add_hit(Position(1, 2))
+        self.assertEqual(is_hit, False)
+        self.assertEqual(is_destroyed, False)
+
+        self.logic.add_ship(Position(1, 2, 3, Orientation.Vertical))
+        is_hit, is_destroyed = self.logic.add_hit(Position(1, 2))
+        self.assertEqual(is_hit, True)
+        self.assertEqual(is_destroyed, False)
