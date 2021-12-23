@@ -29,3 +29,15 @@ class Logic:
         is_hit, is_destroyed = self.__board.add_hit(position)
         self.__shots_board.add_hit(position)
         return is_hit, is_destroyed
+
+    def is_game_over(self):
+        ships = self.__board.ships
+        game_over = True
+        for key in ships.keys():
+            ship = ships[key]
+            if not ship.is_destroyed():
+                game_over = False
+        return game_over
+
+
+

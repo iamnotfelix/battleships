@@ -56,14 +56,6 @@ class Board:
         self.__ships[ship.id] = ship
         self.__add_ship_to_matrix(ship)
 
-    def check_ship(self, ship_id):
-        ship = self.__ships[ship_id]
-        destroyed = True
-        for i in range(0, len(ship)):
-            if not ship[i]:
-                destroyed = False
-        return destroyed
-
     def add_hit(self, position):
         x = position.x
         y = position.y
@@ -74,11 +66,13 @@ class Board:
         if isinstance(cell, dict):
             hit_ship_id = cell["id"]
             hit_ship_cell = cell["cell"]
+
             hit_ship = self.__ships[hit_ship_id]
             hit_ship[hit_ship_cell] = True
-            return True, self.check_ship(hit_ship_id)
+            return True, hit_ship.is_destroyed()
         return False, False
 
+    # to be deleted or commented after development
     def debug_init(self):
         self.add_ship(Ship(0, Position(1, 1, 3, Orientation.Vertical)))
         self.add_ship(Ship(1, Position(2, 6, 4, Orientation.Vertical)))

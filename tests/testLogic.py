@@ -34,3 +34,13 @@ class LogicTest(unittest.TestCase):
         is_hit, is_destroyed = self.logic.add_hit(Position(1, 2))
         self.assertEqual(is_hit, True)
         self.assertEqual(is_destroyed, False)
+
+    def test_is_game_over(self):
+        self.logic.add_ship(Position(1, 2, 2, Orientation.Horizontal))
+        self.assertFalse(self.logic.is_game_over())
+
+        self.logic.add_hit(Position(1, 2))
+        self.assertFalse(self.logic.is_game_over())
+
+        self.logic.add_hit(Position(1, 3))
+        self.assertTrue(self.logic.is_game_over())
