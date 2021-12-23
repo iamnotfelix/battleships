@@ -16,10 +16,10 @@ class Board:
             row = self.__board[i]
             for j in range(1, len(row)):
                 cell = row[j]
-                if cell == '-':
-                    matrix += str(cell) + " "
-                else:
+                if isinstance(cell, dict):
                     matrix += str(cell['id']) + " "
+                else:
+                    matrix += str(cell) + " "
             matrix += "\n"
         return matrix
 
