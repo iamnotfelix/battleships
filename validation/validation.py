@@ -1,12 +1,9 @@
 
 from domain.orientation import Orientation
-from exceptions.exceptions import PositionException
+from exceptions.exceptions import PositionException, InputException
 
 
 class PositionValidation:
-
-    def __init__(self):
-        pass
 
     @staticmethod
     def __validate_bounds(x, y, size, orientation):
@@ -36,3 +33,27 @@ class PositionValidation:
 
         self.__validate_bounds(x, y, size, orientation)
         self.__validate_overlapping(x, y, size, orientation, board)
+
+
+class InputValidation:
+
+    @staticmethod
+    def validate_coordinate(coord):
+        try:
+            coord = int(coord)
+            if coord < 1 or coord > 10:
+                raise InputException("Coordinate out of bounds! Coordinates must be between 1 and 10!")
+        except ValueError:
+            raise InputException("Coordinate must be a natural number!")
+        return coord
+
+    @staticmethod
+    def validate_orientation(orientation):
+        try:
+            orientation = int(orientation)
+            if orientation != 1 and orientation != 2:
+                raise InputException("Orientation must be 1 or 2!")
+            orientation = Orientation.Vertical if orientation == 1 else Orientation.Horizontal
+        except ValueError:
+            raise InputException("Orientation must be 1 or 2!")
+        return orientation
