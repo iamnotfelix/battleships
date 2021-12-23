@@ -12,7 +12,7 @@ class LogicTest(unittest.TestCase):
 
     def setUp(self) -> None:
         self.board = Board()
-        self.position_validation = PositionValidation
+        self.position_validation = PositionValidation()
         self.logic = Logic(self.board, self.position_validation)
 
     def test_add_ship(self):

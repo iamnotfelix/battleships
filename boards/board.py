@@ -65,9 +65,6 @@ if __name__ == "__main__":
     board.add_ship(Ship(0, Position(1, 1, 3, Orientation.Vertical)))
     board.add_ship(Ship(1, Position(2, 6, 4, Orientation.Vertical)))
     board.add_ship(Ship(2, Position(7, 2, 5, Orientation.Horizontal)))
-    board.add_ship(Ship(3, Position(9, 6, 3, Orientation.Horizontal)))
+    board.add_ship(Ship(3, Position(10, 8, 3, Orientation.Horizontal)))
     board.add_ship(Ship(4, Position(1, 9, 2, Orientation.Vertical)))
     print(str(board))
-    # print(board.ships)
-
-# todo: create auto ids for ships

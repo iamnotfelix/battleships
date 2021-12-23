@@ -11,8 +11,7 @@ class Logic:
         self.__id_counter += 1
         return self.__id_counter
 
-    # todo: create auto ids for ships
     def add_ship(self, position):
         ship = self.__board.create_ship(self.id(), position)
-        self.__position_validator.validate(ship)
+        self.__position_validator.validate(ship, self.__board)
         self.__board.add_ship(ship)
