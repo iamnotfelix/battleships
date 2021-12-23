@@ -41,7 +41,7 @@ class Board:
         size = ship.position.size
         orientation = ship.position.orientation
 
-        for i in range(1, size + 1):
+        for i in range(0, size):
             cell = {
                 "id": ship.id,
                 "cell": i
@@ -56,15 +56,33 @@ class Board:
         self.__ships[ship.id] = ship
         self.__add_ship_to_matrix(ship)
 
+    def check_ship(self, ship_id):
+        ship = self.__ships[ship_id]
+        destroyed = True
+        for i in range(0, len(ship)):
+            if not ship[i]:
+                destroyed = False
+        return destroyed
+
     def add_hit(self, position):
-        pass
+        x = position.x
+        y = position.y
 
+        cell = self.__board[x][y]
+        self.__board[x][y] = 'X'
 
-if __name__ == "__main__":
-    board = Board()
-    board.add_ship(Ship(0, Position(1, 1, 3, Orientation.Vertical)))
-    board.add_ship(Ship(1, Position(2, 6, 4, Orientation.Vertical)))
-    board.add_ship(Ship(2, Position(7, 2, 5, Orientation.Horizontal)))
-    board.add_ship(Ship(3, Position(10, 8, 3, Orientation.Horizontal)))
-    board.add_ship(Ship(4, Position(1, 9, 2, Orientation.Vertical)))
-    print(str(board))
+        if isinstance(cell, dict):
+            hit_ship_id = cell["id"]
+            hit_ship_cell = cell["cell"]
+            hit_ship = self.__ships[hit_ship_id]
+            hit_ship[hit_ship_cell] = True
+            return True, self.check_ship(hit_ship_id)
+        return False, False
+
+    def debug_init(self):
+        self.add_ship(Ship(0, Position(1, 1, 3, Orientation.Vertical)))
+        self.add_ship(Ship(1, Position(2, 6, 4, Orientation.Vertical)))
+        self.add_ship(Ship(2, Position(7, 2, 5, Orientation.Horizontal)))
+        self.add_ship(Ship(3, Position(10, 8, 3, Orientation.Horizontal)))
+        self.add_ship(Ship(4, Position(1, 9, 2, Orientation.Vertical)))
+
