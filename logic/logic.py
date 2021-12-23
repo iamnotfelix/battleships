@@ -7,6 +7,10 @@ class Logic:
         self.__position_validator = position_validator
         self.__id_counter = -1
 
+    @property
+    def board(self):
+        return self.__board
+
     def id(self):
         self.__id_counter += 1
         return self.__id_counter
