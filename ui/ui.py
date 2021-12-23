@@ -5,8 +5,9 @@ from exceptions.exceptions import InputException, PositionException
 
 class UI:
 
-    def __init__(self, player_logic, input_validator):  # , player_board, player_record, computer_board, computer_record, validation
+    def __init__(self, player_logic, computer_logic, input_validator):  # , player_board, player_record, computer_board, computer_record, validation
         self.__player_logic = player_logic
+        self.__computer_logic = computer_logic
         self.__input_validator = input_validator
 
     @staticmethod
@@ -152,7 +153,6 @@ class UI:
 
         game_over = False
         players_turn = True
-        # todo: check if the game is over, create a function in logic(check both the player's board and computer)
         # todo: random first turn?
         while not game_over:
             if players_turn:
@@ -164,7 +164,8 @@ class UI:
                 self.__display_board(self.__player_logic.shots_board)
 
                 position = self.__get_hit_position()
-                is_hit, is_destroyed = self.__player_logic.add_hit(position)
+                is_hit, is_destroyed = self.__computer_logic.add_hit(position)
+                self.__player_logic.record_hit(position)
                 if is_hit:
                     pass
                 if is_destroyed:
@@ -172,8 +173,11 @@ class UI:
 
                 input("Press enter to continue... ")
             else:
-                pass
-            game_over = self.__player_logic.is_game_over()
+                position = self.__computer_logic.generate_position()
+                self.__player_logic.add_hit(position)
+                self.__computer_logic.record_hit(position)
+
+            game_over = self.__player_logic.is_game_over() and self.__computer_logic.is_game_over()
             players_turn = not players_turn
 
     def start(self):
