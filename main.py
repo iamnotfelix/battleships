@@ -10,7 +10,8 @@ position_validator = PositionValidation()
 input_validator = InputValidation()
 
 player_board = Board()
-player_logic = Logic(player_board, position_validator)
+shots_board = Board()
+player_logic = Logic(player_board, shots_board, position_validator)
 
 ui = UI(player_logic, input_validator)
 ui.start()

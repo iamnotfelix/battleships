@@ -48,8 +48,9 @@ class UI:
         print("exit\tExit the game.")
         print("\nEnter command:")
 
-    def __display_board(self):
-        print(str(self.__player_logic.board))
+    @staticmethod
+    def __display_board(board):
+        print(str(board))
 
     @staticmethod
     def __get_input(message, validator):
@@ -74,7 +75,12 @@ class UI:
         return position
 
     def __get_hit_position(self):
-        pass
+        print("Where do you want to hit?")
+        row = self.__get_input("Row: ", self.__input_validator.validate_coordinate)
+        col = self.__get_input("Col: ", self.__input_validator.validate_coordinate)
+
+        position = Position(row, col)
+        return position
 
     @staticmethod
     def __get_command():
@@ -100,8 +106,9 @@ class UI:
             except Exception as ex:
                 print(str(ex))
 
-    def __start_game(self):
+    def __place_ships(self):
         print("Step 1 - Place your ships on the board.")
+        input("Press enter to continue... ")
         ships = [
             {
                 "type": "Carrier",
@@ -127,14 +134,47 @@ class UI:
         for ship in ships:
             while True:
                 try:
-                    self.__display_board()
+                    self.__display_board(self.__player_logic.board)
                     position = self.__get_ship_position(ship)
                     self.__player_logic.add_ship(position)
                     break
                 except PositionException as ex:
                     print(str(ex))
         print("\nYour final board: ")
-        self.__display_board()
+        self.__display_board(self.__player_logic.board)
+        input("Press enter to continue... ")
+
+    def __start_game(self):
+        self.__player_logic.board.debug_init()      # todo: remove when done
+        # self.__place_ships()
+        print("Step 2 - Start attacking your opponent.")
+        input("Press enter to continue... ")
+
+        game_over = False
+        players_turn = True
+        # todo: check if the game is over, create a function in logic(check both the player's board and computer)
+        # todo: random first turn?
+        while not game_over:
+            if players_turn:
+                # todo: print players board and shots_board side by side
+                #       (create a function in logic that return a string containing the boards side by side)
+                print("Your board: ")
+                self.__display_board(self.__player_logic.board)
+                print("Your attempted shots: ")
+                self.__display_board(self.__player_logic.shots_board)
+
+                position = self.__get_hit_position()
+                is_hit, is_destroyed = self.__player_logic.add_hit(position)
+                if is_hit:
+                    pass
+                if is_destroyed:
+                    pass
+
+                input("Press enter to continue... ")
+            else:
+                pass
+            game_over = self.__player_logic.is_game_over()
+            players_turn = not players_turn
 
     def start(self):
         self.__menu_handler()
