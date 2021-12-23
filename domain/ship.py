@@ -23,3 +23,12 @@ class Ship:
     @property
     def position(self):
         return self.__position
+
+    def check_ship(self):
+        destroyed = True
+        for cell in self.__cells:
+            if not cell:
+                destroyed = False
+        return destroyed
+
+# todo: len, getitem, setitem - might be useless now (delete them?)
