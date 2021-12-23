@@ -24,7 +24,7 @@ class Ship:
     def position(self):
         return self.__position
 
-    def check_ship(self):
+    def is_destroyed(self):
         destroyed = True
         for cell in self.__cells:
             if not cell:

@@ -36,7 +36,7 @@ class ShipTest(unittest.TestCase):
         self.assertEqual(ship.id, 0)
         self.assertEqual(ship.position, position)
 
-    def test_check_ship(self):
+    def test_is_destroyed(self):
         ship = Ship(0, Position(1, 2, 3, Orientation.Vertical))
 
-        self.assertFalse(ship.check_ship())
+        self.assertFalse(ship.is_destroyed())
