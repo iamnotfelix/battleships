@@ -156,20 +156,19 @@ class UI:
         # todo: random first turn?
         while not game_over:
             if players_turn:
-                # todo: print players board and shots_board side by side
-                #       (create a function in logic that return a string containing the boards side by side)
-                print("Your board: ")
-                self.__display_board(self.__player_logic.board)
-                print("Your attempted shots: ")
-                self.__display_board(self.__player_logic.shots_board)
-
+                print(self.__player_logic.get_boards())
                 position = self.__get_hit_position()
                 is_hit, is_destroyed = self.__computer_logic.add_hit(position)
                 self.__player_logic.record_hit(position)
+
+                print("\n")
                 if is_hit:
-                    pass
+                    print("Hit was successful!")
+                else:
+                    print("Hit failed!")
                 if is_destroyed:
-                    pass
+                    print("Enemy ship destroyed!")
+                print("\n")
 
                 input("Press enter to continue... ")
             else:
