@@ -18,7 +18,7 @@ class PositionValidation:
     def __validate_overlapping(x, y, size, orientation, board):
         for i in range(1, size + 1):
             cell = board.board[x][y]
-            if cell != '-':
+            if isinstance(cell, dict):
                 raise PositionException("Ships can not overlap!")
             if orientation == Orientation.Vertical:
                 x += 1
