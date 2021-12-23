@@ -25,6 +25,10 @@ class LogicTest(unittest.TestCase):
         self.logic.add_ship(position)
         self.assertEqual(self.board.ships.__len__(), 1)
 
+    def test_record_hit(self):
+        self.logic.record_hit(Position(1, 1))
+        self.assertEqual(self.logic.shots_board.board[1][1], 'X')
+
     def test_add_hit(self):
         is_hit, is_destroyed = self.logic.add_hit(Position(1, 2))
         self.assertEqual(is_hit, False)

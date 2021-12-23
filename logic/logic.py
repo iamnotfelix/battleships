@@ -25,9 +25,11 @@ class Logic:
         self._position_validator.validate(ship, self._board)
         self._board.add_ship(ship)
 
+    def record_hit(self, position):
+        self._shots_board.add_hit(position)
+
     def add_hit(self, position):
         is_hit, is_destroyed = self._board.add_hit(position)
-        self._shots_board.add_hit(position)
         return is_hit, is_destroyed
 
     def is_game_over(self):
