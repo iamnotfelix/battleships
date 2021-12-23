@@ -12,12 +12,14 @@ class LogicTest(unittest.TestCase):
 
     def setUp(self) -> None:
         self.board = Board()
+        self.shots_board = Board()
         self.position_validation = PositionValidation()
-        self.logic = Logic(self.board, self.position_validation)
+        self.logic = Logic(self.board, self.shots_board, self.position_validation)
 
     def test_properties(self):
         self.assertEqual(self.logic.board, self.board)
-    
+        self.assertEqual(self.logic.shots_board, self.shots_board)
+
     def test_add_ship(self):
         position = Position(1, 2, 3, Orientation.Vertical)
         self.logic.add_ship(position)
