@@ -16,6 +16,53 @@ class Logic:
     def shots_board(self):
         return self._shots_board
 
+    def get_boards(self):
+        # t_l_corner = "┌"
+        # t_r_corner = "┐"
+        # b_l_corner = "└"
+        # b_r_corner = "┘"
+        # cross = "┼"
+        # horizontal = "─"
+        # vertical = "│"
+        # b_edge = "┴"
+        # l_edge = "┤"
+        # t_edge = "┬"
+        # r_edge = "├"
+        panel = '\tYour board\t\t\tYour shots\n'
+        panel += '  '
+        for i in range(1, 11):
+            panel += f'{i} '
+        panel += '\t\t   '
+        for i in range(1, 11):
+            panel += f'{i} '
+        panel += '\n'
+
+        for i in range(1, 11):
+            if i == 10:
+                panel += f'{i} '
+            else:
+                panel += f'{i}  '
+            for j in range(1, 11):
+                cell = self._board.board[i][j]
+                if isinstance(cell, dict):
+                    panel += f'{cell["id"]} '
+                else:
+                    panel += f'{cell} '
+
+            panel += '\t\t'
+            if i == 10:
+                panel += f'{i} '
+            else:
+                panel += f'{i}  '
+            for j in range(1, 11):
+                cell = self._shots_board.board[i][j]
+                if isinstance(cell, dict):
+                    panel += f'{cell["id"]} '
+                else:
+                    panel += f'{cell} '
+            panel += '\n'
+        return panel
+
     def id(self):
         self._id_counter += 1
         return self._id_counter
@@ -40,6 +87,3 @@ class Logic:
             if not ship.is_destroyed():
                 game_over = False
         return game_over
-
-
-
