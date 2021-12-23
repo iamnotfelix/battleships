@@ -4,11 +4,13 @@ from ui.ui import UI
 
 from boards.board import Board
 from logic.logic import Logic
-from validation.validation import PositionValidation
+from validation.validation import PositionValidation, InputValidation
+
+position_validator = PositionValidation()
+input_validator = InputValidation()
 
 player_board = Board()
-position_validator = PositionValidation()
 player_logic = Logic(player_board, position_validator)
 
-ui = UI(player_logic)
+ui = UI(player_logic, input_validator)
 ui.start()
