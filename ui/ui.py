@@ -1,11 +1,13 @@
 
 from domain.position import Position
+from exceptions.exceptions import InputException, PositionException
 
 
 class UI:
 
-    def __init__(self, player_logic):  # , player_board, player_record, computer_board, computer_record, validation
+    def __init__(self, player_logic, input_validator):  # , player_board, player_record, computer_board, computer_record, validation
         self.__player_logic = player_logic
+        self.__input_validator = input_validator
 
     @staticmethod
     def __display_game_rules():
@@ -47,22 +49,29 @@ class UI:
         print("\nEnter command:")
 
     def __display_board(self):
-        pass
+        print(str(self.__player_logic.board))
+
+    @staticmethod
+    def __get_input(message, validator):
+        while True:
+            try:
+                data = input(message)
+                data = validator(data)
+                break
+            except InputException as ex:
+                print(str(ex))
+        return data
 
     def __get_ship_position(self, ship):
         print(f"Position your {ship['type']} of size {ship['size']}")
-        while True:
-            try:
-                row = input("Row: ")
-                col = input("Col: ")
-                print("Chose a valid orientation\nvertical - 1 or horizontal - 2")
-                orientation = input("Orientation: ")
-                # todo: make enums for orientation
-                position = Position(row, col, ship['size'], orientation)
-                position = self.__position_validation.validate(position)
-                return position
-            except Exception as ex:
-                print(str(ex))
+        row = self.__get_input("Row: ", self.__input_validator.validate_coordinate)
+        col = self.__get_input("Col: ", self.__input_validator.validate_coordinate)
+
+        print("Chose a valid orientation:\nvertical - 1 or horizontal - 2")
+        orientation = self.__get_input("Orientation: ", self.__input_validator.validate_orientation)
+
+        position = Position(row, col, ship['size'], orientation)
+        return position
 
     def __get_hit_position(self):
         pass
@@ -93,7 +102,6 @@ class UI:
 
     def __start_game(self):
         print("Step 1 - Place your ships on the board.")
-        self.__display_board()
         ships = [
             {
                 "type": "Carrier",
@@ -117,11 +125,16 @@ class UI:
             }
         ]
         for ship in ships:
-            # todo: update board so the user can see where his ships are
-            position = self.__get_ship_position(ship)
-            # todo: validate position
-            # todo: add ship to the board
-            self.__display_board()
+            while True:
+                try:
+                    self.__display_board()
+                    position = self.__get_ship_position(ship)
+                    self.__player_logic.add_ship(position)
+                    break
+                except PositionException as ex:
+                    print(str(ex))
+        print("\nYour final board: ")
+        self.__display_board()
 
     def start(self):
         self.__menu_handler()
