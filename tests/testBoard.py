@@ -13,6 +13,12 @@ class BoardTest(unittest.TestCase):
     def setUp(self) -> None:
         self.board = Board()
 
+    def test_str(self):
+        ship = Ship(0, Position(1, 2, 3, Orientation.Vertical))
+        self.board.add_ship(ship)
+        board = str(self.board)
+        self.assertNotEqual(len(board), 0)
+
     def test_properties(self):
         mat = [['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
                ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
