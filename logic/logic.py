@@ -56,10 +56,7 @@ class Logic:
                 panel += f'{i}  '
             for j in range(1, 11):
                 cell = self._shots_board.board[i][j]
-                if isinstance(cell, dict):
-                    panel += f'{cell["id"]} '
-                else:
-                    panel += f'{cell} '
+                panel += f'{cell} '
             panel += '\n'
         return panel
 
