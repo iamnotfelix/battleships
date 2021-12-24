@@ -21,3 +21,10 @@ computer_logic.init_board()
 
 ui = UI(player_logic, computer_logic, input_validator)
 ui.start()
+
+
+# todo: game_over might not be working properly
+# todo: implement a strategy for the computer
+# todo: play a game to finish to see if it works properly
+# todo: refactor the ui so it is more organized
+# todo: add documentation to all non-ui functions (after everything is done)

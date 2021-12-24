@@ -146,14 +146,13 @@ class UI:
         input("Press enter to continue... ")
 
     def __start_game(self):
-        self.__player_logic.board.debug_init()      # todo: remove when done
-        # self.__place_ships()
+        # self.__player_logic.board.debug_init()      # todo: remove when done
+        self.__place_ships()
         print("Step 2 - Start attacking your opponent.")
         input("Press enter to continue... ")
 
         game_over = False
         players_turn = True
-        # todo: random first turn?
         while not game_over:
             if players_turn:
                 print(self.__player_logic.get_boards())
@@ -176,7 +175,7 @@ class UI:
                 self.__player_logic.add_hit(position)
                 self.__computer_logic.record_hit(position)
 
-            game_over = self.__player_logic.is_game_over() and self.__computer_logic.is_game_over()
+            game_over = self.__player_logic.is_game_over() or self.__computer_logic.is_game_over()
             players_turn = not players_turn
 
     def start(self):
