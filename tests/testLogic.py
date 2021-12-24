@@ -20,6 +20,11 @@ class LogicTest(unittest.TestCase):
         self.assertEqual(self.logic.board, self.board)
         self.assertEqual(self.logic.shots_board, self.shots_board)
 
+    def test_get_boards(self):
+        self.logic.add_ship(Position(1, 2, 3, Orientation.Vertical))
+        boards = self.logic.get_boards()
+        self.assertNotEqual(len(boards), 0)
+
     def test_add_ship(self):
         position = Position(1, 2, 3, Orientation.Vertical)
         self.logic.add_ship(position)
