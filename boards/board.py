@@ -11,17 +11,26 @@ class Board:
         self.__ships = dict()
 
     def __str__(self):
-        matrix = ""
-        for i in range(1, len(self.__board)):
-            row = self.__board[i]
-            for j in range(1, len(row)):
-                cell = row[j]
+        panel = ''
+        panel += '  '
+        for i in range(1, 11):
+            panel += f'{i} '
+        panel += '\n'
+
+        for i in range(1, 11):
+            if i == 10:
+                panel += f'{i} '
+            else:
+                panel += f'{i}  '
+            for j in range(1, 11):
+                cell = self.__board[i][j]
                 if isinstance(cell, dict):
-                    matrix += str(cell['id']) + " "
+                    panel += f'{cell["id"]} '
                 else:
-                    matrix += str(cell) + " "
-            matrix += "\n"
-        return matrix
+                    panel += f'{cell} '
+            panel += '\n'
+
+        return panel
 
     @property
     def board(self):
