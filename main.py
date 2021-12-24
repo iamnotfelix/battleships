@@ -23,7 +23,7 @@ ui = UI(player_logic, computer_logic, input_validator)
 ui.start()
 
 
-# todo: game_over might not be working properly
+# todo: show a message with the player that won
 # todo: implement a strategy for the computer
 # todo: play a game to finish to see if it works properly
 # todo: refactor the ui so it is more organized

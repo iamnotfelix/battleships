@@ -108,7 +108,7 @@ class UI:
                 print(str(ex))
 
     def __place_ships(self):
-        print("Step 1 - Place your ships on the board.")
+        print("\nStep 1 - Place your ships on the board.")
         input("Press enter to continue... ")
         ships = [
             {
@@ -145,10 +145,18 @@ class UI:
         self.__display_board(self.__player_logic.board)
         input("Press enter to continue... ")
 
+    def __display_game_over(self, player_won):
+        if player_won:
+            print("Congratulations you won the war!")
+        else:
+            print("You lost!\nMission failed, you'll get it next time!")
+        input("Press enter to continue... ")
+        self.__display_menu()
+
     def __start_game(self):
         # self.__player_logic.board.debug_init()      # todo: remove when done
         self.__place_ships()
-        print("Step 2 - Start attacking your opponent.")
+        print("\nStep 2 - Start attacking your opponent.")
         input("Press enter to continue... ")
 
         game_over = False
@@ -171,11 +179,16 @@ class UI:
 
                 input("Press enter to continue... ")
             else:
-                position = self.__computer_logic.generate_position()
-                self.__player_logic.add_hit(position)
-                self.__computer_logic.record_hit(position)
+                position = self.__computer_logic.get_new_position()
+                is_hit, is_destroyed = self.__player_logic.add_hit(position)
+                self.__computer_logic.record_hit(position, is_hit, is_destroyed)
 
             game_over = self.__player_logic.is_game_over() or self.__computer_logic.is_game_over()
+            if game_over:
+                if players_turn:
+                    self.__display_game_over(True)
+                else:
+                    self.__display_game_over(False)
             players_turn = not players_turn
 
     def start(self):
