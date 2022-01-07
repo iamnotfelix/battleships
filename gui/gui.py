@@ -33,20 +33,32 @@ class GUI:
 
     def start(self):
 
+        BOARD_X = 200
+        BOARD_Y = 90
+        HEADER_X = 300
+        HEADER_Y = 12
+        FOOTER_X = 135  # 235
+        FOOTER_Y = 600
+        CONTENT_X = 820
+        CONTENT_Y = 12
+        FINISH_X = 680
+        FINISH_Y = 600
+
         background = GameObject("data/background.png", (0, 0))
-        board = GameObject("data/board.png", (100, 90))     # (120, 90)
-        ship_5 = GameObject("data/5.png", (720, 90))
-        ship_4 = GameObject("data/4.png", (720, 190))
-        ship_31 = GameObject("data/3.png", (720, 290))
-        ship_32 = GameObject("data/3.png", (720, 390))
-        ship_2 = GameObject("data/2.png", (720, 490))
+        board = GameObject("data/board.png", (BOARD_X, BOARD_Y))
+        ship_5 = GameObject("data/5.png", (820, 90))
+        ship_4 = GameObject("data/4.png", (820, 190))
+        ship_31 = GameObject("data/3.png", (820, 290))
+        ship_32 = GameObject("data/3.png", (820, 390))
+        ship_2 = GameObject("data/2.png", (820, 490))
 
         font = pygame.font.SysFont('agencyfb', 60, False, False)
-        header_text = TextObject(font, "Place your fleet", (200, 12))
-        footer_text = TextObject(font, "Press 'r' to rotate ship", (135, 600))
-        ships_text = TextObject(font, "Your ships:", (720, 12))
+        header_text = TextObject(font, "Place your fleet", (HEADER_X, HEADER_Y))
+        footer_text = TextObject(font, "Press 'R' to rotate ship", (FOOTER_X, FOOTER_Y))
+        content_text = TextObject(font, "Your ships:", (CONTENT_X, CONTENT_Y))
+        finish_text = TextObject(font, "Press 'Enter' when done", (FINISH_X, FINISH_Y))
 
-        self.__texts = [header_text, footer_text, ships_text]
+        self.__texts = [header_text, footer_text, content_text, finish_text]
         self.__sprites = [background, board, ship_5, ship_4, ship_31, ship_32, ship_2]
         self.__ships = [ship_5, ship_4, ship_31, ship_32, ship_2]
 
@@ -75,9 +87,9 @@ class GUI:
                         if dragged_ship:
                             if board.rect.collidepoint(dragged_ship.rect.topleft):
                                 corner = dragged_ship.rect.topleft
-                                pos_x = (corner[0] - 100) // 50
-                                pos_y = (corner[1] - 90) // 50
-                                mapped = (pos_x * 50 + 100, pos_y * 50 + 90)
+                                pos_x = (corner[0] - BOARD_X) // 50
+                                pos_y = (corner[1] - BOARD_Y) // 50
+                                mapped = (pos_x * 50 + BOARD_X, pos_y * 50 + BOARD_Y)
                                 dragged_ship.x, dragged_ship.y = mapped
                         dragged_ship = None
                 elif event.type == pygame.MOUSEMOTION:
