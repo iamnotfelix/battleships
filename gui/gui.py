@@ -150,15 +150,15 @@ class PlayingScreen:
         self.__sprites = dict()
 
         """ constants """
-        self.BOARD_X = 200
-        self.BOARD_Y = 90
-        self.SHOTS_BOARD_X = 100
+        self.BOARD_X = 90
+        self.BOARD_Y = 100
+        self.SHOTS_BOARD_X = 690
         self.SHOTS_BOARD_Y = 100
-        self.HEADER1_X = 300
+        self.HEADER1_X = 250
         self.HEADER1_Y = 12
-        self.HEADER2_X = 12
+        self.HEADER2_X = 830
         self.HEADER2_Y = 12
-        self.PRESS_X = 100
+        self.PRESS_X = 480
         self.PRESS_Y = 600
 
         """ States & active assets """
@@ -194,6 +194,19 @@ class PlayingScreen:
             "press": press_text
         }
 
+    def __event_handler(self, event):
+        if event.type == pygame.QUIT:
+            self.loop = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            pass
+        self.__update_window()
+
+    def start(self):
+        self.__load_assets()
+        while self.loop:
+            for event in pygame.event.get():
+                self.__event_handler(event)
+
 
 class GUI:
 
@@ -212,7 +225,9 @@ class GUI:
 
     def start(self):
         placing_screen = PlacingShipsScreen(self.__screen, self.__player_logic)
-        placing_screen.start()
+        ships = placing_screen.start()
+        playing_screen = PlayingScreen(self.__screen, ships, player_logic)
+        playing_screen.start()
         # while self.loop:
         #     for event in pygame.event.get():
         #         if self.is_menu:
