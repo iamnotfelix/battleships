@@ -4,11 +4,12 @@ from domain.orientation import Orientation
 
 class GameObject:
 
-    def __init__(self, file_path, position=(0, 0)):
+    def __init__(self, file_path, position, size=None):
         self.__surface = pygame.image.load(file_path)
         self.__rect = self.__surface.get_rect()
         self.__rect.x, self.__rect.y = position
         self.__orientation = Orientation.Horizontal
+        self.__size = size
         self.__placed = False
 
     @property
@@ -34,6 +35,10 @@ class GameObject:
     @property
     def orientation(self):
         return self.__orientation
+
+    @property
+    def size(self):
+        return self.__size
 
     @property
     def placed(self):
