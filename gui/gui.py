@@ -123,8 +123,10 @@ class PlacingShipsScreen:
                     except Exception as ex:
                         print(str(ex))
                         # todo: create a pop up message for error
+                        # todo: write on the same window a message (delete everything and write on background) for
+                        #       an amount of time
                 else:
-                    # todo: create a pop up message for error
+                    # todo: same as above
                     print("Not all ships are placed correctly!")
         self.__update_window()
         return None
@@ -142,8 +144,9 @@ class PlacingShipsScreen:
 
 
 class PlayingScreen:
-    def __init__(self, screen, ships, player_logic):
+    def __init__(self, screen, ships, player_logic, computer_logic):
         self.__player_logic = player_logic
+        self.__computer_logic = computer_logic
 
         self.__screen = screen
         self.__ships = ships
@@ -163,6 +166,7 @@ class PlayingScreen:
 
         """ States & active assets """
         self.loop = True
+        self.x_count = 1
 
     def __update_window(self):
         for key in self.__sprites.keys():
@@ -171,11 +175,6 @@ class PlayingScreen:
 
     def __set_ship_position(self):
         for ship in self.__ships:
-            # self.BOARD_X = 200
-            # self.BOARD_Y = 90
-
-            # self.BOARD_X = 90
-            # self.BOARD_Y = 100
             x, y = ship.position
             ship.x = x - 110
             ship.y = y + 10
@@ -211,7 +210,42 @@ class PlayingScreen:
         if event.type == pygame.QUIT:
             self.loop = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            pass
+            mouse_position = pygame.mouse.get_pos()
+            if self.__sprites["shots_board"].rect.collidepoint(mouse_position):
+                # player's turn
+                coordinates = ((mouse_position[1] - 100) // 50 + 1, (mouse_position[0] - 690) // 50 + 1)
+                coordinates = Position(coordinates[0], coordinates[1])
+                self.__player_logic.record_hit(coordinates)
+                is_hit, is_destroyed = self.__computer_logic.add_hit(coordinates)
+                # todo: display a message to see if it hit or not
+
+                # render player hit
+                board_coordinates = ((coordinates.y - 1) * 50 + 690, (coordinates.x - 1) * 50 + 100)
+                x_sprite = GameObject("data/x.png", board_coordinates)
+                self.__sprites[f"x{self.x_count}"] = x_sprite
+                self.x_count += 1
+
+                # check if player wins
+                if self.__computer_logic.is_game_over():
+                    print("player wins")
+                    # todo: make a pop up for player win, end the game and go to menu
+
+                # computer turn
+                computer_coordinates = self.__computer_logic.get_new_position()
+                is_hit, is_destroyed = self.__player_logic.add_hit(computer_coordinates)
+                self.__computer_logic.record_hit(computer_coordinates, is_hit, is_destroyed)
+
+                # render computer hit
+                computer_coordinates = ((computer_coordinates.y - 1) * 50 + 90, (computer_coordinates.x - 1) * 50 + 100)
+                x_sprite = GameObject("data/x.png", computer_coordinates)
+                self.__sprites[f"x{self.x_count}"] = x_sprite
+                self.x_count += 1
+
+                # check if computer wins
+                if self.__player_logic.is_game_over():
+                    print("computer wins")
+                    # todo: make a pop up for computer win, end the game and go to the menu
+
         self.__update_window()
 
     def start(self):
@@ -239,7 +273,7 @@ class GUI:
     def start(self):
         placing_screen = PlacingShipsScreen(self.__screen, self.__player_logic)
         ships = placing_screen.start()
-        playing_screen = PlayingScreen(self.__screen, ships, player_logic)
+        playing_screen = PlayingScreen(self.__screen, ships, player_logic, computer_logic)
         playing_screen.start()
         # while self.loop:
         #     for event in pygame.event.get():
@@ -254,6 +288,7 @@ class GUI:
 if __name__ == "__main__":
     from logic.logic import Logic
     from boards.board import Board
+    from logic.computerLogic import ComputerLogic
 
     position_validator = PositionValidation()
 
@@ -264,6 +299,8 @@ if __name__ == "__main__":
     computer_shots_board = Board()
 
     player_logic = Logic(player_board, player_shots_board, position_validator)
-    computer_logic = Logic(computer_board, computer_shots_board, position_validator)
+    computer_logic = ComputerLogic(computer_board, computer_shots_board, position_validator)
+    computer_logic.init_board()
+    # todo: init the board when it should be init-ed
     gui = GUI(player_logic, computer_logic)
     gui.start()
