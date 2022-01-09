@@ -169,6 +169,17 @@ class PlayingScreen:
             self.__screen.blit(self.__sprites[key].surface, self.__sprites[key].position)
         pygame.display.update()
 
+    def __set_ship_position(self):
+        for ship in self.__ships:
+            # self.BOARD_X = 200
+            # self.BOARD_Y = 90
+
+            # self.BOARD_X = 90
+            # self.BOARD_Y = 100
+            x, y = ship.position
+            ship.x = x - 110
+            ship.y = y + 10
+
     def __load_assets(self):
         background = GameObject("data/background.png", (0, 0))
         board = GameObject("data/board.png", (self.BOARD_X, self.BOARD_Y))
@@ -179,6 +190,8 @@ class PlayingScreen:
         header1_text = TextObject(font_header, "Your fleet", (self.HEADER1_X, self.HEADER1_Y))
         header2_text = TextObject(font_header, "Your shots", (self.HEADER2_X, self.HEADER2_Y))
         press_text = TextObject(font, "'Esc' - to go to menu", (self.PRESS_X, self.PRESS_Y))
+
+        self.__set_ship_position()
 
         self.__sprites = {
             "background": background,
