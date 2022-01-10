@@ -175,7 +175,6 @@ class PlacingShipsScreen:
                                 self.__player_logic.add_ship(ship_pos)
                                 self.added_ships.append(ship)
                         return self.__ships
-                        # todo: go to next screen
                     except Exception as ex:
                         info_screen = InfoScreen(self.__screen, str(ex))
                         info_screen.start()
@@ -271,18 +270,26 @@ class PlayingScreen:
                 coordinates = Position(coordinates[0], coordinates[1])
                 self.__player_logic.record_hit(coordinates)
                 is_hit, is_destroyed = self.__computer_logic.add_hit(coordinates)
-                # todo: display a message to see if it hit or not
 
                 # render player hit
                 board_coordinates = ((coordinates.y - 1) * 50 + 690, (coordinates.x - 1) * 50 + 100)
+                if is_hit:
+                    hit_part = GameObject("data/1.png", board_coordinates)
+                    self.__sprites[f"x{self.x_count}"] = hit_part
+                    self.x_count += 1
                 x_sprite = GameObject("data/x.png", board_coordinates)
                 self.__sprites[f"x{self.x_count}"] = x_sprite
                 self.x_count += 1
+                if is_destroyed:
+                    info_screen = InfoScreen(self.__screen, "You destroyed a ship!")
+                    info_screen.start()
 
                 # check if player wins
                 if self.__computer_logic.is_game_over():
                     print("player wins")
-                    # todo: make a pop up for player win, end the game and go to menu
+                    info_screen = InfoScreen(self.__screen, "You won! GGEZ <33333")
+                    info_screen.start()
+                    # todo: go to menu
 
                 # computer turn
                 computer_coordinates = self.__computer_logic.get_new_position()
@@ -298,7 +305,9 @@ class PlayingScreen:
                 # check if computer wins
                 if self.__player_logic.is_game_over():
                     print("computer wins")
-                    # todo: make a pop up for computer win, end the game and go to the menu
+                    info_screen = InfoScreen(self.__screen, "You lost! XD")
+                    info_screen.start()
+                    # todo: go to the menu
 
         self.__update_window()
 
