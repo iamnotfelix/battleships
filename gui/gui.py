@@ -7,7 +7,82 @@ from validation.validation import PositionValidation
 
 
 class MenuScreen:
-    pass
+
+    def __init__(self, screen):
+        self.__screen = screen
+        self.__sprites = dict()
+
+        self.loop = True
+        self.sys_cursor = pygame.mouse.get_cursor()
+
+        self.TITLE_X = 440
+        self.TITLE_Y = 100
+        self.PLAY_X = 440
+        self.PLAY_Y = 280
+        self.EXIT_X = 440
+        self.EXIT_Y = 400
+
+    def __update_window(self):
+        for key in self.__sprites.keys():
+            self.__screen.blit(self.__sprites[key].surface, self.__sprites[key].position)
+        pygame.display.update()
+
+    def __load_assets(self):
+        background = GameObject("data/background.png", (0, 0))
+
+        font_title = pygame.font.SysFont('agencyfb', 115, False, False)
+        title_text = TextObject(font_title, "Battleships", (self.TITLE_X, self.TITLE_Y))
+
+        play_button = GameObject("data/play.png", (self.PLAY_X, self.PLAY_Y))
+        exit_button = GameObject("data/exit.png", (self.EXIT_X, self.EXIT_Y))
+
+        self.__sprites = {
+            "background": background,
+            "title": title_text,
+            "play": play_button,
+            "exit": exit_button
+        }
+
+    def __event_handler(self, event):
+        if event.type == pygame.QUIT:
+            self.loop = False
+        elif event.type == pygame.MOUSEMOTION:
+            mouse_position = pygame.mouse.get_pos()
+            if self.__sprites["play"].rect.collidepoint(mouse_position) or \
+                    self.__sprites["exit"].rect.collidepoint(mouse_position):
+                pygame.mouse.set_cursor(pygame.cursors.diamond)
+            else:
+                pygame.mouse.set_cursor(self.sys_cursor)
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_position = pygame.mouse.get_pos()
+            if self.__sprites["play"].rect.collidepoint(mouse_position):
+                btn_pos = self.__sprites["play"].position
+                active_button = GameObject("data/play_active.png", btn_pos)
+                self.__sprites["play"] = active_button
+            elif self.__sprites["exit"].rect.collidepoint(mouse_position):
+                btn_pos = self.__sprites["exit"].position
+                active_button = GameObject("data/exit_active.png", btn_pos)
+                self.__sprites["exit"] = active_button
+            # else:
+            #     self.__sprites["play"] = GameObject("data/play.png", self.__sprites["play"].position)
+            #     self.__sprites["exit"] = GameObject("data/exit.png", self.__sprites["exit"].position)
+        elif event.type == pygame.MOUSEBUTTONUP:
+            mouse_position = pygame.mouse.get_pos()
+            if self.__sprites["play"].rect.collidepoint(mouse_position):
+                self.loop = False
+            elif self.__sprites["exit"].rect.collidepoint(mouse_position):
+                self.loop = False
+                pygame.quit()
+            else:
+                self.__sprites["play"] = GameObject("data/play.png", self.__sprites["play"].position)
+                self.__sprites["exit"] = GameObject("data/exit.png", self.__sprites["exit"].position)
+        self.__update_window()
+
+    def start(self):
+        self.__load_assets()
+        while self.loop:
+            for event in pygame.event.get():
+                self.__event_handler(event)
 
 
 class InfoScreen:
@@ -55,6 +130,7 @@ class InfoScreen:
     def __event_handler(self, event):
         if event.type == pygame.QUIT:
             self.loop = False
+            pygame.quit()
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
             self.loop = False
         self.__update_window()
@@ -135,6 +211,7 @@ class PlacingShipsScreen:
     def __event_handler(self, event):
         if event.type == pygame.QUIT:
             self.loop = False
+            pygame.quit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 self.dragging = True
@@ -262,6 +339,7 @@ class PlayingScreen:
     def __event_handler(self, event):
         if event.type == pygame.QUIT:
             self.loop = False
+            pygame.quit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_position = pygame.mouse.get_pos()
             if self.__sprites["shots_board"].rect.collidepoint(mouse_position):
@@ -334,18 +412,12 @@ class GUI:
         self.is_playing = False
 
     def start(self):
-        placing_screen = PlacingShipsScreen(self.__screen, self.__player_logic)
-        ships = placing_screen.start()
-        playing_screen = PlayingScreen(self.__screen, ships, player_logic, computer_logic)
-        playing_screen.start()
-        # while self.loop:
-        #     for event in pygame.event.get():
-        #         if self.is_menu:
-        #             pass
-        #         elif self.is_placing_ships:
-        #             self.__ship_placing_screen(event)
-        #         elif self.is_playing:
-        #             pass
+        menu_screen = MenuScreen(self.__screen)
+        menu_screen.start()
+        # placing_screen = PlacingShipsScreen(self.__screen, self.__player_logic)
+        # ships = placing_screen.start()
+        # playing_screen = PlayingScreen(self.__screen, ships, player_logic, computer_logic)
+        # playing_screen.start()
 
 
 if __name__ == "__main__":
