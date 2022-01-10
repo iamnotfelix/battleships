@@ -1,9 +1,16 @@
+import sys
+
 import pygame
 
 from gameObject import GameObject
 from textObject import TextObject
+
 from domain.position import Position
+
 from validation.validation import PositionValidation
+from logic.logic import Logic
+from boards.board import Board
+from logic.computerLogic import ComputerLogic
 
 
 class MenuScreen:
@@ -46,6 +53,7 @@ class MenuScreen:
     def __event_handler(self, event):
         if event.type == pygame.QUIT:
             self.loop = False
+            sys.exit()
         elif event.type == pygame.MOUSEMOTION:
             mouse_position = pygame.mouse.get_pos()
             if self.__sprites["play"].rect.collidepoint(mouse_position) or \
@@ -63,16 +71,14 @@ class MenuScreen:
                 btn_pos = self.__sprites["exit"].position
                 active_button = GameObject("data/exit_active.png", btn_pos)
                 self.__sprites["exit"] = active_button
-            # else:
-            #     self.__sprites["play"] = GameObject("data/play.png", self.__sprites["play"].position)
-            #     self.__sprites["exit"] = GameObject("data/exit.png", self.__sprites["exit"].position)
         elif event.type == pygame.MOUSEBUTTONUP:
             mouse_position = pygame.mouse.get_pos()
             if self.__sprites["play"].rect.collidepoint(mouse_position):
+                pygame.mouse.set_cursor(self.sys_cursor)
                 self.loop = False
             elif self.__sprites["exit"].rect.collidepoint(mouse_position):
                 self.loop = False
-                pygame.quit()
+                sys.exit()
             else:
                 self.__sprites["play"] = GameObject("data/play.png", self.__sprites["play"].position)
                 self.__sprites["exit"] = GameObject("data/exit.png", self.__sprites["exit"].position)
@@ -130,7 +136,7 @@ class InfoScreen:
     def __event_handler(self, event):
         if event.type == pygame.QUIT:
             self.loop = False
-            pygame.quit()
+            sys.exit()
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
             self.loop = False
         self.__update_window()
@@ -211,7 +217,7 @@ class PlacingShipsScreen:
     def __event_handler(self, event):
         if event.type == pygame.QUIT:
             self.loop = False
-            pygame.quit()
+            sys.exit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 self.dragging = True
@@ -238,6 +244,8 @@ class PlacingShipsScreen:
                 mouse_position = pygame.mouse.get_pos()
                 self.dragged_ship.rect.center = mouse_position
         elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self.loop = False
             if event.key == pygame.K_r:
                 if self.dragging == 1 and self.dragged_ship:
                     self.dragged_ship.rotate()
@@ -268,9 +276,6 @@ class PlacingShipsScreen:
                 ships = self.__event_handler(event)
                 if isinstance(ships, list):
                     return ships
-                elif ships:
-                    pass
-                    # todo: go to menu option
 
 
 class PlayingScreen:
@@ -339,7 +344,7 @@ class PlayingScreen:
     def __event_handler(self, event):
         if event.type == pygame.QUIT:
             self.loop = False
-            pygame.quit()
+            sys.exit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_position = pygame.mouse.get_pos()
             if self.__sprites["shots_board"].rect.collidepoint(mouse_position):
@@ -367,7 +372,7 @@ class PlayingScreen:
                     print("player wins")
                     info_screen = InfoScreen(self.__screen, "You won! GGEZ <33333")
                     info_screen.start()
-                    # todo: go to menu
+                    self.loop = False
 
                 # computer turn
                 computer_coordinates = self.__computer_logic.get_new_position()
@@ -385,8 +390,9 @@ class PlayingScreen:
                     print("computer wins")
                     info_screen = InfoScreen(self.__screen, "You lost! XD")
                     info_screen.start()
-                    # todo: go to the menu
-
+                    self.loop = False
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            self.loop = False
         self.__update_window()
 
     def start(self):
@@ -398,44 +404,48 @@ class PlayingScreen:
 
 class GUI:
 
-    def __init__(self, player_logic, computer_logic):
-        self.__player_logic = player_logic
-        self.__computer_logic = computer_logic
-
+    def __init__(self):
         pygame.init()
         pygame.display.set_caption("Battleships")
         self.__screen = pygame.display.set_mode((1280, 680), pygame.SCALED)
 
         """ Screen state"""
+        self.loop = True
         self.is_menu = False
         self.is_placing_ships = True
         self.is_playing = False
 
+    @staticmethod
+    def __get_new_player():
+        position_validator = PositionValidation()
+        player_board = Board()
+        player_shots_board = Board()
+
+        return Logic(player_board, player_shots_board, position_validator)
+
+    @staticmethod
+    def __get_new_computer():
+        position_validator = PositionValidation()
+        computer_board = Board()
+        computer_shots_board = Board()
+
+        computer_logic = ComputerLogic(computer_board, computer_shots_board, position_validator)
+        computer_logic.init_board()
+        return  computer_logic
+
     def start(self):
-        menu_screen = MenuScreen(self.__screen)
-        menu_screen.start()
-        # placing_screen = PlacingShipsScreen(self.__screen, self.__player_logic)
-        # ships = placing_screen.start()
-        # playing_screen = PlayingScreen(self.__screen, ships, player_logic, computer_logic)
-        # playing_screen.start()
+        while True:
+            menu_screen = MenuScreen(self.__screen)
+            menu_screen.start()
+            player_logic = self.__get_new_player()
+            placing_screen = PlacingShipsScreen(self.__screen, player_logic)
+            ships = placing_screen.start()
+            if ships:
+                computer_logic = self.__get_new_computer()
+                playing_screen = PlayingScreen(self.__screen, ships, player_logic, computer_logic)
+                playing_screen.start()
 
 
 if __name__ == "__main__":
-    from logic.logic import Logic
-    from boards.board import Board
-    from logic.computerLogic import ComputerLogic
-
-    position_validator = PositionValidation()
-
-    player_board = Board()
-    player_shots_board = Board()
-
-    computer_board = Board()
-    computer_shots_board = Board()
-
-    player_logic = Logic(player_board, player_shots_board, position_validator)
-    computer_logic = ComputerLogic(computer_board, computer_shots_board, position_validator)
-    computer_logic.init_board()
-    # todo: init the board when it should be init-ed
-    gui = GUI(player_logic, computer_logic)
+    gui = GUI()
     gui.start()
