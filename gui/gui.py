@@ -10,6 +10,62 @@ class MenuScreen:
     pass
 
 
+class InfoScreen:
+
+    def __init__(self, screen, text):
+        self.__screen = screen
+        self.__main_text = text
+        self.__sprites = dict()
+
+        self.MAIN_X = None
+        self.MAIN_Y = None
+        self.PRESS_X = 480
+        self.PRESS_Y = 600
+
+        self.loop = True
+
+    def __update_window(self):
+        for key in self.__sprites.keys():
+            self.__screen.blit(self.__sprites[key].surface, self.__sprites[key].position)
+        pygame.display.update()
+
+    def __get_text_offset(self, font):
+        text_rect = font.render(self.__main_text, True, (0, 0, 0)).get_rect()
+        offset = (text_rect.width // 2, text_rect.height // 2)
+        return offset
+
+    def __load_assets(self):
+        background = GameObject("data/background.png", (0, 0))
+
+        font_main = pygame.font.SysFont('agencyfb', 60, False, False)
+        offset = self.__get_text_offset(font_main)
+        self.MAIN_X = self.__screen.get_rect().center[0] - offset[0]
+        self.MAIN_Y = self.__screen.get_rect().center[1] - offset[1]
+        main_text = TextObject(font_main, self.__main_text, (self.MAIN_X, self.MAIN_Y))
+
+        font = pygame.font.SysFont("agencyfb", 50, False, False)
+        press_text = TextObject(font, "'Enter' - to continue", (self.PRESS_X, self.PRESS_Y))
+
+        self.__sprites = {
+            "background": background,
+            "press": press_text,
+            "main": main_text
+        }
+
+    def __event_handler(self, event):
+        if event.type == pygame.QUIT:
+            self.loop = False
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+            self.loop = False
+        self.__update_window()
+
+    def start(self):
+        self.__load_assets()
+        while self.loop:
+            for event in pygame.event.get():
+                self.__event_handler(event)
+
+
 class PlacingShipsScreen:
 
     def __init__(self, screen, player_logic):
@@ -101,7 +157,7 @@ class PlacingShipsScreen:
                         self.dragged_ship.placed = False
                 self.dragged_ship = None
         elif event.type == pygame.MOUSEMOTION:
-            if self.dragging == 1 and self.dragged_ship:
+            if self.dragging == 1 and self.dragged_ship and not (self.dragged_ship in self.added_ships):
                 mouse_position = pygame.mouse.get_pos()
                 self.dragged_ship.rect.center = mouse_position
         elif event.type == pygame.KEYDOWN:
@@ -121,13 +177,11 @@ class PlacingShipsScreen:
                         return self.__ships
                         # todo: go to next screen
                     except Exception as ex:
-                        print(str(ex))
-                        # todo: create a pop up message for error
-                        # todo: write on the same window a message (delete everything and write on background) for
-                        #       an amount of time
+                        info_screen = InfoScreen(self.__screen, str(ex))
+                        info_screen.start()
                 else:
-                    # todo: same as above
-                    print("Not all ships are placed correctly!")
+                    info_screen = InfoScreen(self.__screen, "Not all ships are placed correctly!")
+                    info_screen.start()
         self.__update_window()
         return None
 
