@@ -1,6 +1,7 @@
 
 
 from ui.ui import UI
+from gui.gui import GUI
 
 from boards.board import Board
 from logic.logic import Logic
@@ -19,9 +20,25 @@ computer_shots_board = Board()
 computer_logic = ComputerLogic(computer_board, computer_shots_board, position_validator)
 computer_logic.init_board()
 
-ui = UI(player_logic, computer_logic, input_validator)
-ui.start()
+print("Menu:")
+print("console\t\tFor console game.")
+print("gui\t\tFor GUI game.")
+print("exit\t\tTo exit.")
+print("Enter a command:")
 
+while True:
 
-# todo: refactor the ui so it is more organized
+    command = input(">>>")
+    command = command.strip()
+    if command == "exit":
+        exit()
+    elif command == "console":
+        ui = UI(player_logic, computer_logic, input_validator)
+        ui.start()
+    elif command == "gui":
+        gui = GUI()
+        gui.start()
+    else:
+        print("Invalid command!")
+
 # todo: add documentation to all non-ui functions (after everything is done)
